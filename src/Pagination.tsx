@@ -90,17 +90,21 @@ export interface PaginationProps {
    */
   label: string
   /**
+   * The active page
+   */
+  activePage?: number
+  /**
    * The function executed on page change
    */
-  onChange: (activePage: number) => void
+  onChange: (page: number) => void
 }
 
 type Ref = HTMLDivElement
 
 const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(props, ref) {
-  const { totalResults, resultsPerPage = 10, label, onChange, ...other } = props
+  const { totalResults, resultsPerPage = 10, label, onChange, activePage, ...other } = props
   const [pages, setPages] = useState<(number | string)[]>([])
-  const [activePage, setActivePage] = useState(1)
+  const [page, setPage] = useState(activePage || 1)
 
   const TOTAL_PAGES = Math.ceil(totalResults / resultsPerPage)
   const FIRST_PAGE = 1
@@ -108,11 +112,11 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
   const MAX_VISIBLE_PAGES = 7
 
   function handlePreviousClick() {
-    setActivePage(activePage - 1)
+    setPage(page - 1)
   }
 
   function handleNextClick() {
-    setActivePage(activePage + 1)
+    setPage(page + 1)
   }
 
   useEffect(() => {
@@ -133,12 +137,12 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
     // max of 7 pages shown (incl. [...])
     if (TOTAL_PAGES <= MAX_VISIBLE_PAGES) {
       setPages(Array.from({ length: TOTAL_PAGES }).map((_, i) => i + 1))
-    } else if (activePage < 5) {
+    } else if (page < 5) {
       // #1 active page < 5 -> show first 5
       setPages([1, 2, 3, 4, 5, '...', TOTAL_PAGES])
-    } else if (activePage >= 5 && activePage < TOTAL_PAGES - 3) {
+    } else if (page >= 5 && page < TOTAL_PAGES - 3) {
       // #2 active page >= 5 && < TOTAL_PAGES - 3
-      setPages([1, '...', activePage - 1, activePage, activePage + 1, '...', TOTAL_PAGES])
+      setPages([1, '...', page - 1, page, page + 1, '...', TOTAL_PAGES])
     } else {
       // #3 active page >= TOTAL_PAGES - 3 -> show last
       setPages([
@@ -151,11 +155,11 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
         TOTAL_PAGES,
       ])
     }
-  }, [activePage, TOTAL_PAGES])
+  }, [page, TOTAL_PAGES])
 
   useEffect(() => {
-    onChange(activePage)
-  }, [activePage])
+    onChange(page)
+  }, [page])
 
   const {
     theme: { pagination },
@@ -169,8 +173,8 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
        * This (label) should probably be an option, and not the default
        */}
       <span className="flex items-center font-semibold tracking-wide uppercase">
-        Showing {activePage * resultsPerPage - resultsPerPage + 1}-
-        {Math.min(activePage * resultsPerPage, totalResults)} of {totalResults}
+        Showing {page * resultsPerPage - resultsPerPage + 1}-
+        {Math.min(page * resultsPerPage, totalResults)} of {totalResults}
       </span>
 
       <div className="flex mt-2 sm:mt-auto sm:justify-end">
@@ -179,7 +183,7 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
             <li>
               <NavigationButton
                 directionIcon="prev"
-                disabled={activePage === FIRST_PAGE}
+                disabled={page === FIRST_PAGE}
                 onClick={handlePreviousClick}
               />
             </li>
@@ -190,8 +194,8 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
                 ) : (
                   <PageButton
                     page={p}
-                    isActive={p === activePage}
-                    onClick={() => setActivePage(+p)}
+                    isActive={p === page}
+                    onClick={() => setPage(+p)}
                   />
                 )}
               </li>
@@ -199,7 +203,7 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
             <li>
               <NavigationButton
                 directionIcon="next"
-                disabled={activePage === LAST_PAGE}
+                disabled={page === LAST_PAGE}
                 onClick={handleNextClick}
               />
             </li>

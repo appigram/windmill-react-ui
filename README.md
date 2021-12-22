@@ -30,7 +30,7 @@ Inside `tailwind.config.js`
 ```js
 const windmill = require('@windmill/react-ui/config')
 module.exports = windmill({
-  purge: [],
+  content: [],
   theme: {
     extend: {},
   },
