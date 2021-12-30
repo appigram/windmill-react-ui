@@ -177,7 +177,7 @@ const Pagination = React.forwardRef<Ref, PaginationProps>(function Pagination(pr
         {Math.min(page * resultsPerPage, totalResults)} of {totalResults}
       </span>
 
-      <div className="flex mt-2 sm:mt-auto sm:justify-end">
+      <div className="flex mt-4 justify-center sm:mt-auto sm:justify-end">
         <nav aria-label={label}>
           <ul className="inline-flex items-center">
             <li>
