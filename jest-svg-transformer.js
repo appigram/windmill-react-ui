@@ -1,15 +1,15 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   process(src, filePath) {
     if (path.extname(filePath) !== '.svg') {
-      return src;
+      return src
     }
 
     const name = `svg-${path.basename(filePath, '.svg')}`
       .split(/\W+/)
       .map((x) => `${x.charAt(0).toUpperCase()}${x.slice(1)}`)
-      .join('');
+      .join('')
 
     return `
       const React = require('react');
@@ -22,4 +22,4 @@ module.exports = {
       module.exports = ${name};
     `
   },
-};
+}
